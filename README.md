@@ -1,74 +1,75 @@
 # MacTab
 
-替代 macOS 的 Cmd+Tab。外观和行为仿照系统切换器，但不显示没有任何窗口的应用（比如关掉所有窗口的访达）。
-只要应用还有窗口，就会显示，包括最小化的、被隐藏的、以及窗口在其他桌面上的。
+English | [简体中文](README.zh-CN.md)
 
-本项目完全免费、开源（[MIT 许可证](LICENSE)），没有付费功能。
+A replacement for the macOS Cmd+Tab switcher. It looks and behaves like the built-in one, but leaves out apps that have no windows (like Finder after you close all its windows). Any app that still has a window is listed, including minimized and hidden windows and windows on other desktops.
 
-## 效果预览
+MacTab is free and open source under the [MIT License](LICENSE), with no paid features. The interface is available in English and Simplified Chinese and follows your system language.
 
-在设置里选择选中效果主题：
+## Themes
+
+Pick a selection theme in Settings:
 
 <table>
   <tr>
-    <td align="center"><img src="docs/images/themes/classic.gif" width="240" alt="经典"><br>经典</td>
-    <td align="center"><img src="docs/images/themes/accent.gif" width="240" alt="强调色"><br>强调色</td>
-    <td align="center"><img src="docs/images/themes/ornate.gif" width="240" alt="花框"><br>花框</td>
+    <td align="center"><img src="docs/images/themes/classic.gif" width="240" alt="Classic"><br>Classic</td>
+    <td align="center"><img src="docs/images/themes/accent.gif" width="240" alt="Accent"><br>Accent</td>
+    <td align="center"><img src="docs/images/themes/ornate.gif" width="240" alt="Ornate"><br>Ornate</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/images/themes/neon.gif" width="240" alt="霓虹"><br>霓虹</td>
-    <td align="center"><img src="docs/images/themes/rainbow.gif" width="240" alt="彩虹流光"><br>彩虹流光</td>
-    <td align="center"><img src="docs/images/themes/marchingAnts.gif" width="240" alt="跑马灯"><br>跑马灯</td>
+    <td align="center"><img src="docs/images/themes/neon.gif" width="240" alt="Neon"><br>Neon</td>
+    <td align="center"><img src="docs/images/themes/rainbow.gif" width="240" alt="Rainbow"><br>Rainbow</td>
+    <td align="center"><img src="docs/images/themes/marchingAnts.gif" width="240" alt="Marching Ants"><br>Marching Ants</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/images/themes/porter.gif" width="240" alt="搬运小人"><br>搬运小人</td>
-    <td align="center"><img src="docs/images/themes/lifter.gif" width="240" alt="举重小人"><br>举重小人</td>
-    <td align="center"><img src="docs/images/themes/cat.gif" width="240" alt="跳跳猫"><br>跳跳猫</td>
+    <td align="center"><img src="docs/images/themes/porter.gif" width="240" alt="Porter"><br>Porter</td>
+    <td align="center"><img src="docs/images/themes/lifter.gif" width="240" alt="Lifter"><br>Lifter</td>
+    <td align="center"><img src="docs/images/themes/cat.gif" width="240" alt="Hopping Cat"><br>Hopping Cat</td>
   </tr>
 </table>
 
-## 下载安装
+## Install
 
-需要 macOS 14 及以上，Apple 芯片和 Intel 都支持。
+Requires macOS 14 or later, on Apple silicon or Intel.
 
-1. 从 [Releases](https://github.com/gabrielsky/mac-tab/releases) 下载最新的 `MacTab-x.y.z.dmg`，打开后把 MacTab 拖进「应用程序」。
-2. 第一次打开时，系统会提示无法验证开发者：MacTab 用的是自签名证书，没有经过苹果公证。点「完成」，到「系统设置 → 隐私与安全性」，在页面下方找到 MacTab，点「仍要打开」。
-3. 首次启动会弹出授权提示：到「系统设置 → 隐私与安全性 → 辅助功能」里打开 MacTab，立即生效，不用重启。
+1. Download the latest `MacTab-x.y.z.dmg` from [Releases](https://github.com/gabrielsky/mac-tab/releases), open it, and drag MacTab into Applications.
+2. The first time you open it, macOS says it can't verify the developer: MacTab is signed with a self-signed certificate and isn't notarized by Apple. Click Done, go to System Settings → Privacy & Security, scroll down to MacTab, and click Open Anyway.
+3. On first launch MacTab asks for accessibility access. Turn on MacTab in System Settings → Privacy & Security → Accessibility. It takes effect immediately, no restart needed.
 
-升级时下载新版覆盖安装即可，不用重新授权。
+To upgrade, download the new version and replace the old one. You won't need to grant access again.
 
-## 从源码编译
+## Build from source
 
 ```bash
 ./scripts/build-app.sh
 ```
 
-编译并安装到 `~/Applications/MacTab.app`。开发说明见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+This builds MacTab and installs it to `~/Applications/MacTab.app`. See [CONTRIBUTING.md](CONTRIBUTING.md) for development notes.
 
-## 使用
+## Usage
 
-| 操作 | 效果 |
+| Action | Result |
 |---|---|
-| Cmd+Tab / Cmd+Shift+Tab | 打开切换器，向后 / 向前选择 |
-| 按住 Cmd 时按 ← → | 移动选中项 |
-| 松开 Cmd | 切换到选中的应用；它的窗口如果全部最小化，会自动恢复一个 |
-| Esc | 取消 |
-| Q / H | 退出 / 隐藏选中的应用 |
-| 鼠标移动 / 点击 | 选中 / 切换 |
+| Cmd+Tab / Cmd+Shift+Tab | Open the switcher and select the next / previous app |
+| ← → while holding Cmd | Move the selection |
+| Release Cmd | Switch to the selected app; if all its windows are minimized, one is restored |
+| Esc | Cancel |
+| Q / H | Quit / hide the selected app |
+| Mouse move / click | Select / switch |
 
-菜单栏图标的菜单里有「设置…」和「退出 MacTab」。设置窗口里可以：
+The menu bar icon has Settings… and Quit MacTab. In Settings you can:
 
-- 选择选中效果主题，右侧实时预览；
-- 打开或关闭开机自动启动；
-- 查看辅助功能授权状态，未授权时一键打开系统设置。
+- pick a selection theme, with a live preview;
+- turn launch at login on or off;
+- check accessibility access, and open System Settings if it's missing.
 
-系统开启「减弱动态效果」时，所有主题都显示为静态。
+When Reduce Motion is on, all themes are shown without animation.
 
-## 已知限制
+## Known limitations
 
-- 少数应用（Chrome、微信等）有残留的弹出小窗口，关掉所有窗口后仍可能显示在列表里。
-- 切换器里的 Q、H 按物理键位识别，非 QWERTY 布局下对应的是别的键。
+- A few apps (Chrome, WeChat, etc.) leave stray popup windows behind, so they may still be listed after you close all their windows.
+- Q and H in the switcher match physical key positions, so on non-QWERTY layouts they're different keys.
 
-## 许可证
+## License
 
 [MIT](LICENSE)

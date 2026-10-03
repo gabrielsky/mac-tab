@@ -22,14 +22,16 @@ swift build -c release "${ARCHS[@]}"
 BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)/MacTab"
 
 rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/MacTab"
+cp -R Resources/*.lproj "$APP/Contents/Resources/" # 界面翻译，按系统语言选用
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>CFBundleIdentifier</key><string>local.mactab</string>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
   <key>CFBundleName</key><string>MacTab</string>
   <key>CFBundleExecutable</key><string>MacTab</string>
   <key>CFBundlePackageType</key><string>APPL</string>

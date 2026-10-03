@@ -1,32 +1,35 @@
+import Foundation
+
 /// 内置主题注册表；rawValue 会存进 UserDefaults，定下后不能改名
 enum ThemeID: String, CaseIterable {
     case classic, accent, ornate, neon, rainbow, marchingAnts, porter, lifter, cat
 
+    /// 名称和说明都是英文原文，中文见 Resources/zh-Hans.lproj
     var title: String {
         switch self {
-        case .classic: "经典"
-        case .accent: "强调色"
-        case .ornate: "花框"
-        case .neon: "霓虹"
-        case .rainbow: "彩虹流光"
-        case .marchingAnts: "跑马灯"
-        case .porter: "搬运小人"
-        case .lifter: "举重小人"
-        case .cat: "跳跳猫"
+        case .classic: String(localized: "Classic")
+        case .accent: String(localized: "Accent")
+        case .ornate: String(localized: "Ornate")
+        case .neon: String(localized: "Neon")
+        case .rainbow: String(localized: "Rainbow")
+        case .marchingAnts: String(localized: "Marching Ants")
+        case .porter: String(localized: "Porter")
+        case .lifter: String(localized: "Lifter")
+        case .cat: String(localized: "Hopping Cat")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .classic: "白色半透明底"
-        case .accent: "系统强调色实色底"
-        case .ornate: "金色双线加点线外框"
-        case .neon: "粉色霓虹描边，呼吸闪烁"
-        case .rainbow: "彩虹渐变边框持续流动"
-        case .marchingAnts: "虚线沿边框行进"
-        case .porter: "像素小人拖着选中框跑过去"
-        case .lifter: "小人把选中图标举高放大"
-        case .cat: "像素猫蹲在图标上，切换时跳过去"
+        case .classic: String(localized: "Outline hugging the icon, like the system switcher")
+        case .accent: String(localized: "Solid system accent color")
+        case .ornate: String(localized: "Gold double border with a dotted outline")
+        case .neon: String(localized: "Pink neon outline that glows and flickers")
+        case .rainbow: String(localized: "Rainbow gradient flowing around the border")
+        case .marchingAnts: String(localized: "Dashes marching around the border")
+        case .porter: String(localized: "A pixel person drags the frame over")
+        case .lifter: String(localized: "A pixel person lifts the selected icon")
+        case .cat: String(localized: "A pixel cat hops from icon to icon")
         }
     }
 

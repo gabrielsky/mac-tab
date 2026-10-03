@@ -11,12 +11,12 @@ final class ThemePreviewView: NSView {
     /// 预览按这个宽度排版：5 个图标在右栏里放得下
     static let layoutWidth: CGFloat = 440
     /// 示例应用；README 效果图（ThemeShotsTests）也用这一组
-    static let apps = [
-        ("访达", "/System/Library/CoreServices/Finder.app"),
-        ("Safari", "/Applications/Safari.app"),
-        ("邮件", "/System/Applications/Mail.app"),
-        ("备忘录", "/System/Applications/Notes.app"),
-        ("终端", "/System/Applications/Utilities/Terminal.app"),
+    static let appPaths = [
+        "/System/Library/CoreServices/Finder.app",
+        "/Applications/Safari.app",
+        "/System/Applications/Mail.app",
+        "/System/Applications/Notes.app",
+        "/System/Applications/Utilities/Terminal.app",
     ]
 
     private let background = SwitcherBackground()
@@ -82,17 +82,22 @@ final class ThemePreviewView: NSView {
 
     private func rebuild() {
         guard active else { return }
-        let layout = content.show(icons: Self.icons(), names: Self.apps.map(\.0), selected: index,
+        let layout = content.show(icons: Self.icons(), names: Self.names(), selected: index,
                                   theme: theme.make(), availableWidth: Self.layoutWidth)
         background.cornerRadius = layout.cornerRadius
         // 换主题可能改变面板高度（角色主题要额外空间），立即重新居中
         centerContent()
     }
 
+    /// 示例应用的名称，由系统按当前语言给出（访达 / Finder）
+    static func names() -> [String] {
+        appPaths.map { FileManager.default.displayName(atPath: $0) }
+    }
+
     /// 示例应用的图标；应用不存在时用通用应用图标。
     /// 先解析软链接：Safari 在 /Applications 里是指向 Cryptexes 的软链接，直接取图标会带上替身箭头
     static func icons() -> [NSImage] {
-        apps.map { _, path in
+        appPaths.map { path in
             FileManager.default.fileExists(atPath: path)
                 ? NSWorkspace.shared.icon(forFile: URL(fileURLWithPath: path).resolvingSymlinksInPath().path)
                 : NSWorkspace.shared.icon(for: .applicationBundle)
@@ -100,7 +105,7 @@ final class ThemePreviewView: NSView {
     }
 
     private func advance() {
-        index = (index + 1) % Self.apps.count
+        index = (index + 1) % Self.appPaths.count
         content.select(index)
     }
 }

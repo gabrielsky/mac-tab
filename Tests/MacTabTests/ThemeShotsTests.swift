@@ -17,6 +17,8 @@ final class ThemeShotsTests: XCTestCase {
     /// README 表格里每张图只有约 280pt 宽，1.5 倍在 Retina 屏上已经够清晰，GIF 也小一半
     static let scale: CGFloat = 1.5
     static let margin: CGFloat = 24
+    /// 效果图统一用英文应用名，不随跑测试的系统语言变；中英文 README 共用一套图
+    static let names = ["Finder", "Safari", "Mail", "Notes", "Terminal"]
     /// 选中项右移两格再回到起点；最后一次切换后留 0.6 秒让动画落定，循环播放首尾相接
     static let steps: [(time: Double, index: Int)] = [(0.6, 2), (1.8, 3), (3.0, 2), (4.2, 1)]
 
@@ -30,7 +32,7 @@ final class ThemeShotsTests: XCTestCase {
         // 所有主题用同一画布尺寸，README 表格里对齐
         let sizes = ThemeID.allCases.map { id in
             let theme = id.make()
-            return SwitcherLayout(count: ThemePreviewView.apps.count, availableWidth: ThemePreviewView.layoutWidth,
+            return SwitcherLayout(count: ThemePreviewView.appPaths.count, availableWidth: ThemePreviewView.layoutWidth,
                                   extraTop: theme.extraTop, extraBottom: theme.extraBottom).size
         }
         let canvas = CGSize(width: sizes.map(\.width).max()! + 2 * Self.margin,
@@ -128,7 +130,7 @@ private final class Stage {
     }
 
     func show(_ id: ThemeID) {
-        let layout = content.show(icons: ThemePreviewView.icons(), names: ThemePreviewView.apps.map(\.0), selected: 1,
+        let layout = content.show(icons: ThemePreviewView.icons(), names: ThemeShotsTests.names, selected: 1,
                                   theme: id.make(), availableWidth: ThemePreviewView.layoutWidth)
         panel.frame = CGRect(x: (root.bounds.width - layout.size.width) / 2, y: (root.bounds.height - layout.size.height) / 2,
                              width: layout.size.width, height: layout.size.height).integral

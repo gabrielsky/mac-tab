@@ -15,11 +15,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // 所有 AX 调用最多等 0.2s，避免卡死在无响应的应用上
         AXUIElementSetMessagingTimeout(AXUIElementCreateSystemWide(), 0.2)
         let menu = NSMenu()
-        let settingsItem = NSMenuItem(title: "设置…", action: #selector(openSettings), keyEquivalent: ",")
+        let settingsItem = NSMenuItem(title: String(localized: "Settings…"), action: #selector(openSettings), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "退出 MacTab", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: String(localized: "Quit MacTab"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
 
         // 授权提示只在启动时弹一次；之后靠每秒轮询感知授权和撤销，都立即生效，不用重启

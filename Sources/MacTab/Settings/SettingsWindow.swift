@@ -14,7 +14,7 @@ final class SettingsWindowController {
         if window == nil {
             let window = SettingsWindow(contentRect: NSRect(x: 0, y: 0, width: 640, height: 420),
                                         styleMask: [.titled, .closable], backing: .buffered, defer: false)
-            window.title = "MacTab 设置"
+            window.title = String(localized: "MacTab Settings")
             window.isReleasedWhenClosed = false
             window.contentView = NSHostingView(rootView: SettingsView(state: state))
             window.center()
@@ -43,6 +43,7 @@ private final class SettingsWindow: NSWindow {
     }
 }
 
+/// SwiftUI 控件的字符串字面量会按系统语言自动查 Resources/*.lproj 里的翻译
 private struct SettingsView: View {
     @ObservedObject var state: AppState
 
@@ -62,7 +63,7 @@ private struct SettingsView: View {
             }
             Divider()
             HStack {
-                Toggle("开机自动启动", isOn: Binding(get: { state.loginEnabled }, set: { state.setLogin($0) }))
+                Toggle("Launch at login", isOn: Binding(get: { state.loginEnabled }, set: { state.setLogin($0) }))
                 Spacer()
                 permissionStatus
             }
@@ -80,19 +81,19 @@ private struct SettingsView: View {
     private var permissionStatus: some View {
         switch state.permission {
         case .granted:
-            Label("辅助功能：已授权", systemImage: "checkmark.circle")
+            Label("Accessibility: allowed", systemImage: "checkmark.circle")
                 .foregroundStyle(.green)
         case .missing:
             HStack {
-                Label("辅助功能：未授权", systemImage: "exclamationmark.triangle")
+                Label("Accessibility: not allowed", systemImage: "exclamationmark.triangle")
                     .foregroundStyle(.orange)
-                Button("打开系统设置") { state.openAccessibilitySettings() }
+                Button("Open System Settings") { state.openAccessibilitySettings() }
             }
         case .tapFailed:
             HStack {
-                Label("事件拦截创建失败", systemImage: "exclamationmark.triangle")
+                Label("Couldn't capture keyboard events", systemImage: "exclamationmark.triangle")
                     .foregroundStyle(.orange)
-                Button("打开系统设置") { state.openAccessibilitySettings() }
+                Button("Open System Settings") { state.openAccessibilitySettings() }
             }
         }
     }
