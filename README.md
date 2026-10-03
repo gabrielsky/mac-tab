@@ -37,24 +37,11 @@
 
 ## 从源码编译
 
-### 一次性准备：创建代码签名证书
-
-辅助功能授权是绑定在签名身份上的。用一个固定的自签名证书签名，重新编译后授权就不会丢。
-
-1. 打开「钥匙串访问」
-2. 菜单「钥匙串访问 → 证书助理 → 创建证书…」
-3. 名称填 `MacTab Local`，身份类型选「自签名根证书」，证书类型选「代码签名」，勾选「让我覆盖默认值」，点「继续」
-4. 有效期填 `3650`（10 年），之后各步保持默认，一路点「继续」直到创建完成
-
-不需要把证书设为「始终信任」。
-
-### 编译与安装
-
 ```bash
 ./scripts/build-app.sh
 ```
 
-这个脚本会编译 release 版（Apple 芯片和 Intel 通用）并签名，然后安装到 `~/Applications/MacTab.app` 并启动。首次启动同样要按上面第 3 步授权。
+编译并安装到 `~/Applications/MacTab.app`。开发说明见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 使用
 
@@ -79,15 +66,6 @@
 
 - 少数应用（Chrome、微信等）有残留的弹出小窗口，关掉所有窗口后仍可能显示在列表里。
 - 切换器里的 Q、H 按物理键位识别，非 QWERTY 布局下对应的是别的键。
-
-## 开发
-
-```bash
-swift test
-/usr/bin/log show --last 2m --style compact --predicate 'subsystem == "local.mactab"'
-```
-
-改了主题后，运行 `./scripts/theme-shots.sh` 重新生成上面的效果图（需要 ffmpeg）。
 
 ## 许可证
 

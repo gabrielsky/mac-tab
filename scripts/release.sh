@@ -8,6 +8,11 @@ VERSION="${1:?用法：$0 <版本号>（如 1.0.0）}"
 DMG="build/MacTab-$VERSION.dmg"
 STAGE="build/dmg"
 
+# 发布版必须用固定证书签名，用户升级后授权才不会失效
+if ! security find-identity -p codesigning | grep -q '"MacTab Local"'; then
+  echo "错误：发布需要证书「MacTab Local」，先运行 scripts/setup-cert.sh" >&2
+  exit 1
+fi
 scripts/assemble-app.sh "$VERSION"
 rm -rf "$STAGE" "$DMG"
 mkdir -p "$STAGE"
