@@ -8,7 +8,9 @@ import XCTest
 
 /// 生成 README 的主题效果图帧；平时跳过，由 scripts/theme-shots.sh 设置 MACTAB_SHOTS_DIR 后运行，再合成 GIF。
 /// 角色主题靠 asyncAfter 切换走路 / 待机，所以按真实时间推进 run loop；
-/// 每帧用 CARenderer 离线渲染，遮罩、阴影等和屏幕上的合成一致，也不需要录屏权限
+/// 每帧用 CARenderer 离线渲染，遮罩、阴影等和屏幕上的合成一致，也不需要录屏权限。
+/// 图层时钟由每帧的 timeOffset 驱动（见 Stage.time），不跟真实时钟走：动画的起始时刻取提交时的真实时间，
+/// 总比按时间轴算的帧时刻晚一点，切换那一帧滑动还没开始、显示的是终点，下一帧又跳回起点
 final class ThemeShotsTests: XCTestCase {
     /// 和 scripts/theme-shots.sh 里的 -framerate 一致
     static let fps = 20.0
@@ -39,20 +41,22 @@ final class ThemeShotsTests: XCTestCase {
             let stage = Stage(canvas: canvas)
             NSAppearance(named: .darkAqua)!.performAsCurrentDrawingAppearance { stage.show(id) }
             // CARenderer 换图层后，要等 run loop 转过一轮再画才生效（实测原地等待、重画、多次提交都不行），先空画一帧
-            _ = try renderer.render(stage.root, at: CACurrentMediaTime())
+            _ = try renderer.render(stage.root)
             Self.runLoop(until: CACurrentMediaTime() + 0.05)
             let start = CACurrentMediaTime()
             var pending = Self.steps[...]
             var frames: [CGImage] = []
             for k in 0..<Int(Self.duration(of: id) * Self.fps) {
                 let t = Double(k) / Self.fps
+                // 先跑 run loop 再拨时钟：两帧之间到点的回调，动画从上一帧的时刻开始，不会比该开始的时刻晚
+                Self.runLoop(until: start + t)
+                stage.time = t
+                // 切换正好落在这一帧：滑动从这一帧的时刻开始，这一帧显示起点
                 while let step = pending.first, step.time <= t {
-                    Self.runLoop(until: start + step.time)
                     stage.content.select(step.index)
                     pending.removeFirst()
                 }
-                Self.runLoop(until: start + t)
-                frames.append(try renderer.render(stage.root, at: start + t))
+                frames.append(try renderer.render(stage.root))
             }
             stage.content.teardown()
 
@@ -86,9 +90,23 @@ private final class Stage {
     private let window: NSWindow
     private let panel = NSView()
 
+    /// 场景的图层时间（秒）。根图层的 speed 为 0，整棵树的时间就停在 timeOffset 上；
+    /// 新加的动画也从这个时刻开始，所以切换那一帧正好是滑动的起点
+    var time: CFTimeInterval = 0 {
+        didSet {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            root.layer?.timeOffset = time
+            CATransaction.commit()
+        }
+    }
+
     init(canvas: CGSize) {
         root = NSView(frame: CGRect(origin: .zero, size: canvas))
         root.wantsLayer = true
+        // 要在主题装上之前停住时钟，循环动画才从时间 0 开始，首尾帧对得上
+        root.layer?.speed = 0
+        root.layer?.timeOffset = 0
         let backdrop = CAGradientLayer()
         backdrop.frame = root.bounds
         backdrop.zPosition = -1
@@ -119,7 +137,7 @@ private final class Stage {
     }
 }
 
-/// 用 CARenderer 把图层树画进 Metal 纹理再读回像素；动画按传入的媒体时间取值
+/// 用 CARenderer 把图层树画进 Metal 纹理再读回像素；画哪一时刻由 Stage.time 决定，和渲染时的真实时间无关
 private final class FrameRenderer {
     private let queue: MTLCommandQueue
     private let texture: MTLTexture
@@ -145,7 +163,7 @@ private final class FrameRenderer {
         renderer.bounds = CGRect(x: 0, y: 0, width: width, height: height)
     }
 
-    func render(_ view: NSView, at time: CFTimeInterval) throws -> CGImage {
+    func render(_ view: NSView) throws -> CGImage {
         let root = try XCTUnwrap(view.layer)
         if renderer.layer !== root {
             renderer.layer = root
@@ -156,7 +174,7 @@ private final class FrameRenderer {
         view.window?.displayIfNeeded() // 选中项变了，名称标签要重画
         // CARenderer 只画已提交的图层树：换图层、改选中项都要先提交
         CATransaction.flush()
-        renderer.beginFrame(atTime: time, timeStamp: nil)
+        renderer.beginFrame(atTime: CACurrentMediaTime(), timeStamp: nil)
         renderer.addUpdate(renderer.bounds)
         renderer.render()
         renderer.endFrame()
